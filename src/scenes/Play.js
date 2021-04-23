@@ -24,8 +24,8 @@ class Play extends Phaser.Scene
                 key: "spinning_planet_anim",
                 frames: this.anims.generateFrameNumbers("spinning_planet_spritesheet", 
                 {
-                    start: 1,
-                    end: 119,
+                    start: 119,
+                    end: 1,
                 }),
                 frameRate: 30,
             });
@@ -35,6 +35,11 @@ class Play extends Phaser.Scene
 
     update(time, delta)
     {
-
+        let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
+        /*
+        Please multiply any movements that are happening in the update function by this variable.
+        That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
+        if you are unsure.
+        */
     }
 }
