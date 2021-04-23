@@ -7,20 +7,20 @@ class Menu extends Phaser.Scene
 
     preload()
     {
-        this.load.spritesheet("titleBG", "./assets/title.png", 
+        /*this.load.spritesheet("titleBG", "./assets/title.png", 
         {   
             frameWidth: 640,
             frameHeight: 480,
             startFrame: 1,
             endFrame: 59,
-        });
+        });*/
         console.log("Enter Menu Scene");
     }
 
     create()
     {
 
-        this.anims.create(
+        /*this.anims.create(
             {
                 key: "title", 
                 frames: this.anims.generateFrameNumbers("titleBG", 
@@ -30,7 +30,7 @@ class Menu extends Phaser.Scene
                     nextAnim: "title",
                 }),
                 frameRate: 10,
-            });
+            });*/
 
         this.menuText = this.add.text(game.config.width/2, game.config.height/2, 'Left/Right arrow to play scene')
 
