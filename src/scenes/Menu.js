@@ -14,6 +14,7 @@ class Menu extends Phaser.Scene
             startFrame: 1,
             endFrame: 59,
         });
+        console.log("Enter Menu Scene");
     }
 
     create()
@@ -31,8 +32,7 @@ class Menu extends Phaser.Scene
                 frameRate: 10,
             });
 
-        this.backgroundAnim.anims.play("title");
-        this.backgroundAnim.anims.setRepeat(-1);
+        this.menuText = this.add.text(game.config.width/2, game.config.height/2, 'Left/Right arrow to play scene')
 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
     }
@@ -41,8 +41,9 @@ class Menu extends Phaser.Scene
     {
         if(Phaser.Input.Keyboard.JustDown(keyLEFT))
         {
+            //easyMode
             this.scene.start('playScene');
-        }
 
+        }
     }
 }
