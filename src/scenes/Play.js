@@ -25,7 +25,7 @@ class Play extends Phaser.Scene
                 frames: this.anims.generateFrameNumbers("spinning_planet_spritesheet", 
                 {
                     start: 1,
-                    end: 120,
+                    end: 119,
                 }),
                 frameRate: 30,
             });
