@@ -39,7 +39,7 @@ class Menu extends Phaser.Scene
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
     }
 
-    update()
+    update(time, delta)
     {
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
         /*
