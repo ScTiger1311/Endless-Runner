@@ -7,25 +7,23 @@ class Play extends Phaser.Scene
 
     preload()
     {
-        this.load.spritesheet("spinning_planet_spritesheet", "./assets/spritesheets/spinning_planet.png",
-        {
-            frameWidth: 1280,
-            frameHeight: 720,
-            startFrame: 1,
-            endFrame: 120,
-        });
+        this.load.atlas("planet_sheet", "./assets/spritesheets/spinning_planet.png", "./assets/spritesheets/spinning_planet.json");
+        this.load.image("gridBG", "./assets/single_sprites/grid_bg.png");
     }
 
     create()
     {
-        this.backgroundAnim = this.add.sprite(0,0, "spinning_planet_spritesheet").setOrigin(0,0);
+        this.backgroundStatic = this.add.sprite(0,0, "gridBG").setOrigin(0,0);
+        this.backgroundAnim = this.add.sprite(0,0, "planet_sheet").setOrigin(0,0);
         this.anims.create(
             {
                 key: "spinning_planet_anim",
-                frames: this.anims.generateFrameNumbers("spinning_planet_spritesheet", 
+                frames: this.anims.generateFrameNames("planet_sheet", 
                 {
+                    prefix: "",
                     start: 1,
-                    end: 120,
+                    end: 119,
+                    zeroPad: 4,
                 }),
                 frameRate: 30,
             });
