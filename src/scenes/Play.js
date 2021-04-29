@@ -18,6 +18,8 @@ class Play extends Phaser.Scene
 
     create()
     {
+        console.log("Entered play scene");
+
         this.backgroundAnim = this.add.sprite(0,0, "spinning_planet_spritesheet").setOrigin(0,0);
         this.anims.create(
             {
@@ -31,6 +33,25 @@ class Play extends Phaser.Scene
             });
             this.backgroundAnim.play("spinning_planet_anim");
             this.backgroundAnim.anims.setRepeat(-1);
+
+         this.curveGraphics = this.add.graphics();
+
+         this.curveGraphics.lineStyle(10, 0xFF0000);
+         this.curveGraphics.beginPath();
+         this.curveGraphics.closePath();
+
+        let testCurve = new Phaser.Curves.Spline([
+            [game.config.width * .500,     game.config.height * .422],
+            [game.config.width * .300,     game.config.height * .432],
+            [game.config.width * .156,     game.config.height * .479],
+            [game.config.width * .109,     game.config.height * .528],
+            [game.config.width * .156,     game.config.height * .585],
+            [game.config.width * .262,     game.config.height * .605],
+            [game.config.width * .500,     game.config.height * .595],
+
+        ]);
+
+        this.curveGraphics.strokePoints(testCurve.points);
     }
 
     update(time, delta)
