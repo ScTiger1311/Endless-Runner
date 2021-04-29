@@ -9,7 +9,8 @@ class Play extends Phaser.Scene
     {
         this.load.atlas("planet_sheet", "./assets/spritesheets/spinning_planet.png", "./assets/spritesheets/spinning_planet.json");
         this.load.image("gridBG", "./assets/single_sprites/grid_bg.png");
-        this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
+        this.load.image("obstacle", "./assets/sprites/TempEnemy.png");
+        //this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
     }
 
     create()
@@ -59,9 +60,16 @@ class Play extends Phaser.Scene
 
         this.curveGraphics.strokePoints(this.testPath.curves[0].points);
 
+        //this.pathFollower = new Phaser.GameObjects.PathFollower();
+
+        this.testEnemy = this.physics.add.sprite(
+            this.testPath.curves[0].points[6].x,
+            this.testPath.curves[0].points[6].y,
+            'obstacle'
+        ).setOrigin(.5);
+
         
 
-        //this.pathFollower = scene.plugins.get('rexpathfollowerplugin').add(gameObject, game.config);
     }
 
     update(time, delta)
