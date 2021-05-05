@@ -8,6 +8,7 @@ class Play extends Phaser.Scene
     preload()
     {
         this.load.atlas("planet_sheet", "./assets/spritesheets/spinning_planet.png", "./assets/spritesheets/spinning_planet.json");
+        this.load.atlas("planet_top_sheet", "./assets/spritesheets/planet_toplayer.png", "./assets/spritesheets/planet_toplayer.json");
         this.load.image("gridBG", "./assets/single_sprites/grid_bg.png");
         this.load.image("obstacle", "./assets/sprites/TempEnemy.png");
         this.load.image("tempPlayer", "./assets/sprites/TempPlayer.png");
@@ -30,10 +31,28 @@ class Play extends Phaser.Scene
                     end: 120,
                     zeroPad: 4,
                 }),
+                frameRate: 240,
+            });
+        this.backgroundAnim.play("spinning_planet_anim");
+        this.backgroundAnim.anims.setRepeat(-1);
+
+
+
+        /*this.planetTopAnim = this.add.sprite(0,0, "planet_top_sheet").setOrigin(0,0);
+        this.anims.create(
+            {
+                key: "planet_top_anim",
+                frames: this.anims.generateFrameNames("planet_top_sheet", 
+                {
+                    prefix: "",
+                    start: 1,
+                    end: 120,
+                    zeroPad: 4,
+                }),
                 frameRate: 30,
             });
-            this.backgroundAnim.play("spinning_planet_anim");
-            this.backgroundAnim.anims.setRepeat(-1);
+        this.planetTopAnim.play("planet_top_anim");
+        this.planetTopAnim.anims.setRepeat(-1);*/
 
 
         //Setup graphics
@@ -46,7 +65,7 @@ class Play extends Phaser.Scene
          //Create actual spline points
         let testCurve = new Phaser.Curves.Spline([
             [game.config.width * .500,     game.config.height * .422], //[0]
-            [game.config.width * (1-.300),     game.config.height * .432], //[1]
+            [game.config.width * (1-.280),     game.config.height * .432], //[1]
             [game.config.width * (1-.156),     game.config.height * .479], //[2]
             [game.config.width * (1-.109),     game.config.height * .528], //[3]
             [game.config.width * (1-.156),     game.config.height * .585], //[4]
@@ -56,7 +75,7 @@ class Play extends Phaser.Scene
             [game.config.width * (.156),       game.config.height * .585], //[8]
             [game.config.width * (.109),       game.config.height * .528], //[9]
             [game.config.width * (.156),       game.config.height * .479], //[10]
-            [game.config.width * (.300),       game.config.height * .432], //[11]
+            [game.config.width * (.280),       game.config.height * .432], //[11]
         ]);
 
         //Create path using spline
@@ -69,7 +88,18 @@ class Play extends Phaser.Scene
 
 
         //Create enemy follower
-        this.obs1 = new basicObstacle(this, this.testPath, testCurve.points[0].x, testCurve.points[0].y, 'obstacle');
+        this.obs1 = new basicObstacle(this, this.testPath, testCurve.points[0].x, testCurve.points[0].y, 'obstacle').setOrigin(.5);
+
+        //Create planet mask
+        const shape = this.make.graphics();
+        shape.fillStyle(0xffffff);
+        shape.beginPath();
+        shape.fillRect(0, 0, 385, 720)
+        shape.fillRect(game.config.width - 385, 0, 385, 720)
+        shape.fillRect(0, game.config.height/2, 1280, 360)
+        let mask = shape.createGeometryMask();
+
+        this.obs1.setMask(mask);
 
         //Create temp physics body to test collision
         this.testPlayer = this.physics.add.sprite(testCurve.points[7].x, testCurve.points[7].y, 'tempPlayer');
@@ -78,6 +108,7 @@ class Play extends Phaser.Scene
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
             console.log(`${obj1.texture.key} is colliding with ${obj2.texture.key} body`);
+            obj1.startFollow(this.pathFollowConfig, 0)
         });
 
         //Setup path follow config
