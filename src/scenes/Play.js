@@ -14,6 +14,7 @@ class Play extends Phaser.Scene
         
         this.load.spritesheet("tempPlayer", "./assets/spritesheets/Player_Idle_Sheet.png", {frameWidth: 416, frameHeight: 222, startFrame: 0, endFrame: 3});
         this.load.spritesheet('basicObstacleSpritesheet', './assets/spritesheets/Obstacle_Blue_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
+        this.load.spritesheet('player_obstacle_sheet', './assets/spritesheets/Obstacle_Red_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         //this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
     }
 
@@ -24,6 +25,19 @@ class Play extends Phaser.Scene
         this.anims.create({
             key: 'bObstacleAnim',
             frames: this.anims.generateFrameNumbers('basicObstacleSpritesheet',
+            {
+                start: 0,
+                end: 15,
+                first: 0
+            }),
+            frameRate: 12,
+            repeat: -1
+
+        });
+
+        this.anims.create({
+            key: 'player_obstacle_anim',
+            frames: this.anims.generateFrameNumbers('player_obstacle_sheet',
             {
                 start: 0,
                 end: 15,
@@ -74,7 +88,7 @@ class Play extends Phaser.Scene
          this.curveGraphics.closePath();
 
          //Create actual spline points
-        let testCurve = new Phaser.Curves.Spline([
+        this.testCurve = new Phaser.Curves.Spline([
             [game.config.width * .500,     game.config.height * .422], //[0]
             [game.config.width * (1-.280),     game.config.height * .432], //[1]
             [game.config.width * (1-.156),     game.config.height * .479], //[2]
@@ -90,8 +104,8 @@ class Play extends Phaser.Scene
         ]);
 
         //Create path using spline
-        this.testPath = this.add.path(testCurve.points[0].x, testCurve.points[0].y);
-        this.testPath.add(testCurve);
+        this.testPath = this.add.path(this.testCurve.points[0].x, this.testCurve.points[0].y);
+        this.testPath.add(this.testCurve);
         this.testPath.closePath()
 
         //Draw the new path
@@ -99,13 +113,11 @@ class Play extends Phaser.Scene
 
 
         //Create enemy follower
-        this.obs1 = new basicObstacle(this, this.testPath, testCurve.points[0].x, testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
-        this.obs1.setScale(.4)
-        this.obs1.play('bObstacleAnim');
+        this.obs1 = new basicObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
 
 
         //Create temp physics body to test collision
-        this.testPlayer = this.physics.add.sprite(testCurve.points[6].x + 150, testCurve.points[6].y, 'tempPlayer').setOrigin(.5, 1);
+        this.testPlayer = this.physics.add.sprite(this.testCurve.points[6].x + 150, this.testCurve.points[6].y, 'tempPlayer').setOrigin(.5, 1);
         this.testPlayer.setScale(.4);
         this.testPlayer.body.setSize(this.testPlayer.width*.7, this.testPlayer.height*.7);
         this.testPlayer.body.setOffset(50, 45);
@@ -115,12 +127,22 @@ class Play extends Phaser.Scene
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
             //Reset obj position on path
-            obj1.reset()
+            obj2.reset()
         });
+
+        //Setup player obstacle group
+        this.playerObsGroup = this.add.group({
+            runChildUpdate: true
+        })
 
         //Setup keyboard control
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+    }
+
+    addPlayerObstacle() {
+        let pObs = new playerObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'player_obstacle_sheet', 0).setOrigin(.5);
+        this.playerObsGroup.add(pObs);
     }
 
     update(time, delta)
@@ -135,6 +157,7 @@ class Play extends Phaser.Scene
         if(Phaser.Input.Keyboard.JustDown(keyUP))
         {         
             this.testPlayer.y -= 100
+            this.addPlayerObstacle()
         }
 
         if(Phaser.Input.Keyboard.JustDown(keyDOWN))
@@ -142,15 +165,8 @@ class Play extends Phaser.Scene
             this.testPlayer.y += 100
         }
 
+        this.physics.overlap(this.testPlayer, this.playerObsGroup);
+
         this.obs1.update();
-
-        if(this.obs1.x < this.testPlayer.x - this.testPlayer.width/2)
-            this.obs1.body.enable = false;
-
-        this.physics.overlap(this.obs1, this.testPlayer)
-
-        if(!this.obs1.isFollowing()) {
-            this.obs1.reset()
-        }
     }
 }

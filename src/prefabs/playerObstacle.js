@@ -1,4 +1,4 @@
-class basicObstacle extends Phaser.GameObjects.PathFollower {
+class playerObstacle extends Phaser.GameObjects.PathFollower {
     constructor(scene, curve, x, y, texture, frame,) {
         super(scene, curve, x, y, texture, frame);
         scene.add.existing(this);
@@ -30,7 +30,7 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         this.shape.fillRect(game.config.width - 385, 0, 385, 720)
         this.shape.fillRect(0, game.config.height/2, 1280, 360)
         this.onMask = this.shape.createGeometryMask();
- 
+
         this.shape = scene.make.graphics();
 
         this.shape.fillStyle(0xffffff);
@@ -42,7 +42,7 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         this.setMask(this.onMask);
 
         this.setScale(.4)
-        this.play('bObstacleAnim');
+        this.play('player_obstacle_anim');
 
         scene.physics.overlap(this, scene.testPlayer)
     }
