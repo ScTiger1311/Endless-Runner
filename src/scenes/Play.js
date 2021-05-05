@@ -143,6 +143,8 @@ class Play extends Phaser.Scene
             this.testPlayer.y += 100
         }
 
+        this.obs1.update();
+
         if(this.obs1.x < this.testPlayer.x - this.testPlayer.width/2)
             this.obs1.body.enable = false;
 
