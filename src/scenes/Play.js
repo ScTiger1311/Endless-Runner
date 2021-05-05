@@ -90,16 +90,7 @@ class Play extends Phaser.Scene
         //Create enemy follower
         this.obs1 = new basicObstacle(this, this.testPath, testCurve.points[0].x, testCurve.points[0].y, 'obstacle').setOrigin(.5);
 
-        //Create planet mask
-        const shape = this.make.graphics();
-        shape.fillStyle(0xffffff);
-        shape.beginPath();
-        shape.fillRect(0, 0, 385, 720)
-        shape.fillRect(game.config.width - 385, 0, 385, 720)
-        shape.fillRect(0, game.config.height/2, 1280, 360)
-        let mask = shape.createGeometryMask();
 
-        this.obs1.setMask(mask);
 
         //Create temp physics body to test collision
         this.testPlayer = this.physics.add.sprite(testCurve.points[7].x, testCurve.points[7].y, 'tempPlayer');
@@ -108,6 +99,8 @@ class Play extends Phaser.Scene
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
             console.log(`${obj1.texture.key} is colliding with ${obj2.texture.key} body`);
+            obj1.stopFollow();
+            obj1.setPosition(obj1.path.curves[0].points[0].x, obj1.path.curves[0].points[0].y);
             obj1.startFollow(this.pathFollowConfig, 0)
         });
 
@@ -115,7 +108,8 @@ class Play extends Phaser.Scene
         this.pathFollowConfig = {
             duration: 4000,
             from: 0,
-            to: 1
+            to: 1,
+            startAt: 0
 
         };
 
