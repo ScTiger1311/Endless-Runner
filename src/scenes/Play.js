@@ -12,12 +12,27 @@ class Play extends Phaser.Scene
         this.load.image("gridBG", "./assets/single_sprites/grid_bg.png");
         this.load.image("obstacle", "./assets/sprites/TempEnemy.png");
         this.load.image("tempPlayer", "./assets/sprites/TempPlayer.png");
+
+        this.load.spritesheet('basicObstacleSpritesheet', './assets/spritesheets/Obstacle_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         //this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
     }
 
     create()
     {
         console.log("Entered play scene");
+
+        this.anims.create({
+            key: 'bObstacleAnim',
+            frames: this.anims.generateFrameNumbers('basicObstacleSpritesheet',
+            {
+                start: 0,
+                end: 15,
+                first: 0
+            }),
+            frameRate: 12,
+            repeat: -1
+
+        });
 
         this.backgroundStatic = this.add.sprite(0,0, "gridBG").setOrigin(0,0);
         this.backgroundAnim = this.add.sprite(0,0, "planet_sheet").setOrigin(0,0);
@@ -84,12 +99,13 @@ class Play extends Phaser.Scene
         this.testPath.closePath()
 
         //Draw the new path
-        this.curveGraphics.strokePoints(this.testPath.curves[0].points);
+        //this.curveGraphics.strokePoints(this.testPath.curves[0].points);
 
 
         //Create enemy follower
-        this.obs1 = new basicObstacle(this, this.testPath, testCurve.points[0].x, testCurve.points[0].y, 'obstacle').setOrigin(.5);
-
+        this.obs1 = new basicObstacle(this, this.testPath, testCurve.points[0].x, testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
+        this.obs1.setScale(.6)
+        this.obs1.play('bObstacleAnim');
 
 
         //Create temp physics body to test collision
@@ -99,6 +115,7 @@ class Play extends Phaser.Scene
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
             console.log(`${obj1.texture.key} is colliding with ${obj2.texture.key} body`);
+            //Reset obj position on path
             obj1.stopFollow();
             obj1.setPosition(obj1.path.curves[0].points[0].x, obj1.path.curves[0].points[0].y);
             obj1.startFollow(this.pathFollowConfig, 0)

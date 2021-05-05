@@ -6,6 +6,7 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         //Enable physics
         scene.physics.world.enable(this);
         this.body.onOverlap = true;
+        this.body.setSize(this.width*.5, this.height*.5);
 
         //Create planet mask
         const shape = scene.make.graphics();
