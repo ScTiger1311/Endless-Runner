@@ -99,7 +99,7 @@ class Play extends Phaser.Scene
         this.testPath.closePath()
 
         //Draw the new path
-        //this.curveGraphics.strokePoints(this.testPath.curves[0].points);
+        this.curveGraphics.strokePoints(this.testPath.curves[0].points);
 
 
         //Create enemy follower
@@ -109,29 +109,19 @@ class Play extends Phaser.Scene
 
 
         //Create temp physics body to test collision
-        this.testPlayer = this.physics.add.sprite(testCurve.points[7].x, testCurve.points[7].y, 'tempPlayer');
+        this.testPlayer = this.physics.add.sprite(testCurve.points[6].x + 150, testCurve.points[6].y, 'tempPlayer');
         this.testPlayer.body.onOverlap = true;
 
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
             console.log(`${obj1.texture.key} is colliding with ${obj2.texture.key} body`);
             //Reset obj position on path
-            obj1.stopFollow();
-            obj1.setPosition(obj1.path.curves[0].points[0].x, obj1.path.curves[0].points[0].y);
-            obj1.startFollow(this.pathFollowConfig, 0)
+            obj1.reset()
         });
 
-        //Setup path follow config
-        this.pathFollowConfig = {
-            duration: 4000,
-            from: 0,
-            to: 1,
-            startAt: 0
-
-        };
-
-        this.obs1.startFollow(this.pathFollowConfig);
-
+        //Setup keyboard control
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     }
 
     update(time, delta)
@@ -142,10 +132,24 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
+
+        if(Phaser.Input.Keyboard.JustDown(keyUP))
+        {         
+            this.testPlayer.y -= 100
+        }
+
+        if(Phaser.Input.Keyboard.JustDown(keyDOWN))
+        {         
+            this.testPlayer.y += 100
+        }
+
+        if(this.obs1.x < this.testPlayer.x - this.testPlayer.width/2)
+            this.obs1.body.enable = false;
+
         this.physics.overlap(this.obs1, this.testPlayer)
 
         if(!this.obs1.isFollowing()) {
-           this.obs1.startFollow(this.pathFollowConfig);
+            this.obs1.reset()
         }
     }
 }
