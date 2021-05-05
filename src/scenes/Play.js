@@ -11,9 +11,9 @@ class Play extends Phaser.Scene
         this.load.atlas("planet_top_sheet", "./assets/spritesheets/planet_toplayer.png", "./assets/spritesheets/planet_toplayer.json");
         this.load.image("gridBG", "./assets/single_sprites/grid_bg.png");
         this.load.image("obstacle", "./assets/sprites/TempEnemy.png");
-        this.load.image("tempPlayer", "./assets/sprites/TempPlayer.png");
-
-        this.load.spritesheet('basicObstacleSpritesheet', './assets/spritesheets/Obstacle_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
+        
+        this.load.spritesheet("tempPlayer", "./assets/spritesheets/Player_Idle_Sheet.png", {frameWidth: 416, frameHeight: 222, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('basicObstacleSpritesheet', './assets/spritesheets/Obstacle_Blue_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         //this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
     }
 
@@ -27,6 +27,19 @@ class Play extends Phaser.Scene
             {
                 start: 0,
                 end: 15,
+                first: 0
+            }),
+            frameRate: 12,
+            repeat: -1
+
+        });
+
+        this.anims.create({
+            key: 'player_idle_anim',
+            frames: this.anims.generateFrameNumbers('tempPlayer',
+            {
+                start: 0,
+                end: 3,
                 first: 0
             }),
             frameRate: 12,
@@ -51,23 +64,6 @@ class Play extends Phaser.Scene
         this.backgroundAnim.play("spinning_planet_anim");
         this.backgroundAnim.anims.setRepeat(-1);
 
-
-
-        /*this.planetTopAnim = this.add.sprite(0,0, "planet_top_sheet").setOrigin(0,0);
-        this.anims.create(
-            {
-                key: "planet_top_anim",
-                frames: this.anims.generateFrameNames("planet_top_sheet", 
-                {
-                    prefix: "",
-                    start: 1,
-                    end: 120,
-                    zeroPad: 4,
-                }),
-                frameRate: 30,
-            });
-        this.planetTopAnim.play("planet_top_anim");
-        this.planetTopAnim.anims.setRepeat(-1);*/
 
 
         //Setup graphics
@@ -99,22 +95,25 @@ class Play extends Phaser.Scene
         this.testPath.closePath()
 
         //Draw the new path
-        this.curveGraphics.strokePoints(this.testPath.curves[0].points);
+        //this.curveGraphics.strokePoints(this.testPath.curves[0].points);
 
 
         //Create enemy follower
         this.obs1 = new basicObstacle(this, this.testPath, testCurve.points[0].x, testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
-        this.obs1.setScale(.6)
+        this.obs1.setScale(.4)
         this.obs1.play('bObstacleAnim');
 
 
         //Create temp physics body to test collision
-        this.testPlayer = this.physics.add.sprite(testCurve.points[6].x + 150, testCurve.points[6].y, 'tempPlayer');
+        this.testPlayer = this.physics.add.sprite(testCurve.points[6].x + 150, testCurve.points[6].y, 'tempPlayer').setOrigin(.5, 1);
+        this.testPlayer.setScale(.4);
+        this.testPlayer.body.setSize(this.testPlayer.width*.7, this.testPlayer.height*.7);
+        this.testPlayer.body.setOffset(50, 45);
+        this.testPlayer.play('player_idle_anim');
         this.testPlayer.body.onOverlap = true;
 
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
-            console.log(`${obj1.texture.key} is colliding with ${obj2.texture.key} body`);
             //Reset obj position on path
             obj1.reset()
         });

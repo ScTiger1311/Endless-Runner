@@ -43,11 +43,12 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
     }
 
     reset() {
+        this.setMask(this.onMask);
         this.stopFollow();
         this.setPosition(this.path.curves[0].points[0].x, this.path.curves[0].points[0].y);
         this.startFollow(this.pathFollowConfig, 0)
         this.offset.y = 0
-        this.offset.y -= Math.floor(Math.random() * 81)
+        this.offset.y -= Math.floor(Math.random() * 151)
         this.pathOffset = this.offset;
         this.body.enable = true;
     }
