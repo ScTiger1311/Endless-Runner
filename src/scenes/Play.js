@@ -5,6 +5,10 @@ class Play extends Phaser.Scene
        super("playScene"); 
     }
 
+    init (data) {
+        this.menuData = data.data;
+    }
+
     preload()
     {
         this.load.atlas("planet_sheet", "./assets/spritesheets/spinning_planet.png", "./assets/spritesheets/spinning_planet.json");
@@ -21,6 +25,7 @@ class Play extends Phaser.Scene
     create()
     {
         console.log("Entered play scene");
+        console.log(this.menuData);
 
         this.anims.create({
             key: 'bObstacleAnim',
@@ -30,7 +35,7 @@ class Play extends Phaser.Scene
                 end: 15,
                 first: 0
             }),
-            frameRate: 12,
+            frameRate: 15,
             repeat: -1
 
         });
@@ -56,7 +61,7 @@ class Play extends Phaser.Scene
                 end: 3,
                 first: 0
             }),
-            frameRate: 12,
+            frameRate: 15,
             repeat: -1
 
         });
@@ -113,7 +118,7 @@ class Play extends Phaser.Scene
 
         //Create temp physics body to test collision
         this.testPlayer = this.physics.add.sprite(this.testCurve.points[6].x + 150, this.testCurve.points[6].y, 'tempPlayer').setOrigin(.5, 1);
-        this.testPlayer.setScale(.4);
+        this.testPlayer.setScale(.3);
         this.testPlayer.body.setSize(this.testPlayer.width*.7, this.testPlayer.height*.7);
         this.testPlayer.body.setOffset(50, 45);
         this.testPlayer.play('player_idle_anim');
@@ -138,6 +143,42 @@ class Play extends Phaser.Scene
         //Create enemy follower
         let obs1 = new basicObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
         this.basicObsGroup.add(obs1);
+
+        //Display score
+        let gameUIConfig = {
+            fontFamily: 'RocketRinder',
+            fontSize: '32px',
+            color: '#C9E2FF',
+            stroke: '#ff002c',
+            strokeThickness: '2',
+            shadow: {
+                color: '#ff004c',
+                fill: 'true',
+                blur: '20'
+            },
+            align: 'center',
+            baselineX: 3,
+            padding: {
+                top: 1,
+                bottom: 1,
+                left: 1,
+                right: 1            
+            },
+            fixedWidth: 0,
+        }
+
+        //Place text
+        this.scoreLeft = this.add.text(60, 33, "Hello World", gameUIConfig);
+
+        let grd = this.scoreLeft.context.createLinearGradient(0, 0, 0, this.scoreLeft.height);
+
+        //  Add in 2 color stops
+        grd.addColorStop(0, '#8E0045');
+        grd.addColorStop(1, '#C9E2FF');
+
+        //  And apply to the Text
+        this.scoreLeft.fill = grd;
+
 
         //Setup keyboard control
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);

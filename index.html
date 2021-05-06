@@ -6,17 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synthwave Game</title>
     <style>
+        @font-face{
+            font-family: 'RocketRinder';
+            src: url('assets/fonts/RocketRinder-yV5d.ttf');
+            overflow: visible;
+        }
         body
         {
             background-color: #616161;
         }
         canvas {
-            display : block;   
+            display : block;
             margin : auto;
         }
     </style>
 </head>
 <body>
+    <div style="font-family: RocketRinder; position:absolute; left:-1000px; visibility:hidden;">.</div>
     <script src="./lib/phaser.js"></script>
     <script src="./src/prefabs/basicObstacle.js"></script>
     <script src="./src/prefabs/playerObstacle.js"></script>
