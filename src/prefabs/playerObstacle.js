@@ -4,6 +4,7 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         scene.add.existing(this);
         
         this.totalFollowDuration = 4000;
+        this.expired = false; //If this is true, the next time this resets it is destroyed
 
         //Setup path initial follow config
         this.pathSpawnConfig = {
@@ -63,6 +64,11 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
     }
 
     reset() {
+        if(this.expired) {
+            this.destroy();
+            return
+        }
+
         this.setMask(this.onMask);
         this.stopFollow();
         this.setPosition(this.path.curves[0].points[0].x, this.path.curves[0].points[0].y);
