@@ -50,7 +50,7 @@ class Menu extends Phaser.Scene
         if(Phaser.Input.Keyboard.JustDown(keyLEFT))
         {
             //easyMode
-            this.scene.start('playScene', { data: "somedata" });
+            this.scene.start('playScene', { menuTime: time });
 
         }
     }

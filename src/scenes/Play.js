@@ -6,7 +6,7 @@ class Play extends Phaser.Scene
     }
 
     init (data) {
-        this.menuData = data.data;
+        
     }
 
     preload()
@@ -25,7 +25,6 @@ class Play extends Phaser.Scene
     create()
     {
         console.log("Entered play scene");
-        console.log(this.menuData);
 
         this.anims.create({
             key: 'bObstacleAnim',
@@ -168,21 +167,23 @@ class Play extends Phaser.Scene
         }
 
         //Place text
-        this.scoreLeft = this.add.text(60, 33, "Hello World", gameUIConfig);
+        this.scoreText = this.add.text(30, game.config.height * .73, "Hello World", gameUIConfig);
 
-        let grd = this.scoreLeft.context.createLinearGradient(0, 0, 0, this.scoreLeft.height);
 
-        //  Add in 2 color stops
-        grd.addColorStop(0, '#8E0045');
-        grd.addColorStop(1, '#C9E2FF');
-
-        //  And apply to the Text
-        this.scoreLeft.fill = grd;
 
 
         //Setup keyboard control
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+
+        //Start scoring timer event
+        this.timer = this.time.addEvent({
+            delay: 1,
+            callback: () => {this.timeScore += 1},
+            loop: true
+        });
+
+        this.timeScore = 0;
     }
 
     addPlayerObstacle() {
@@ -202,6 +203,8 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
+
+        this.scoreText.setText("Hyperseconds Drifted: " + this.timer.elapsed.toString().substr(0, 4) );
 
         if(Phaser.Input.Keyboard.JustDown(keyUP))
         {         
