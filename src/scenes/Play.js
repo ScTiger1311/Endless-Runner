@@ -145,6 +145,9 @@ class Play extends Phaser.Scene
     }
 
     addPlayerObstacle() {
+        if(this.playerObsGroup.getLength() > 2) {
+            this.playerObsGroup.remove(this.playerObsGroup.getLast(true, false),true,true);
+        }
         let pObs = new playerObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'player_obstacle_sheet', 0).setOrigin(.5);
         this.playerObsGroup.add(pObs);
     }
