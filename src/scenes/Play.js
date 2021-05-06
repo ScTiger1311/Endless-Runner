@@ -111,11 +111,6 @@ class Play extends Phaser.Scene
         //Draw the new path
         //this.curveGraphics.strokePoints(this.testPath.curves[0].points);
 
-
-        //Create enemy follower
-        this.obs1 = new basicObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
-
-
         //Create temp physics body to test collision
         this.testPlayer = this.physics.add.sprite(this.testCurve.points[6].x + 150, this.testCurve.points[6].y, 'tempPlayer').setOrigin(.5, 1);
         this.testPlayer.setScale(.4);
@@ -134,6 +129,15 @@ class Play extends Phaser.Scene
         this.playerObsGroup = this.add.group({
             runChildUpdate: true
         })
+
+        //Setup basic obstacle group
+        this.basicObsGroup = this.add.group({
+            runChildUpdate: true
+        })
+
+        //Create enemy follower
+        let obs1 = new basicObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
+        this.basicObsGroup.add(obs1);
 
         //Setup keyboard control
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -166,7 +170,6 @@ class Play extends Phaser.Scene
         }
 
         this.physics.overlap(this.testPlayer, this.playerObsGroup);
-
-        this.obs1.update();
+        this.physics.overlap(this.testPlayer, this.basicObsGroup);
     }
 }

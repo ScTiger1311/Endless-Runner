@@ -67,12 +67,12 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         }
 
         if(this.x > game.config.width * (1-.12)) {
-            console.log("Off")
+            //console.log("Off")
             this.setMask(this.offMask);
         }
 
         if(this.x < game.config.width * (.16)) {
-            console.log("On")
+            //console.log("On")
             this.setMask(this.onMask);
         }
 

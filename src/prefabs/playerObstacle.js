@@ -3,18 +3,33 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         super(scene, curve, x, y, texture, frame);
         scene.add.existing(this);
         
-        //Setup path follow config
-        this.pathFollowConfig = {
-            duration: 4000,
+        this.totalFollowDuration = 4000;
+
+        //Setup path initial follow config
+        this.pathSpawnConfig = {
+            //Duration is the total duration * the percentage of the path left to traverse
+            //from: + duration coefficent should = 1 to kepp consistent speed
+            duration: this.totalFollowDuration * .32,
+            from: .68,
+            to: 1,
+            startAt: 0
+
+        };
+
+        //Setup path loop follow config
+        this.pathLoopConfig = {
+            duration: this.totalFollowDuration,
             from: 0,
             to: 1,
             startAt: 0
 
         };
 
-        this.offset = new Phaser.Math.Vector2(0, 0);
+        this.offsetY = -30
 
-        this.startFollow(this.pathFollowConfig)
+        this.startFollow(this.pathSpawnConfig)
+
+        this.pathOffset.y = this.offsetY
 
         //Enable physics
         scene.physics.world.enable(this);
@@ -51,10 +66,11 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         this.setMask(this.onMask);
         this.stopFollow();
         this.setPosition(this.path.curves[0].points[0].x, this.path.curves[0].points[0].y);
-        this.startFollow(this.pathFollowConfig, 0)
-        this.offset.y = 0
-        this.offset.y -= Math.floor(Math.random() * 151)
-        this.pathOffset = this.offset;
+        this.startFollow(this.pathLoopConfig, 0)
+        // this.offset.y = 0
+        // this.offset.y -= Math.floor(Math.random() * 151)
+        this.pathOffset.y = this.offsetY;
+
         this.body.enable = true;
     }
 
@@ -67,12 +83,12 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         }
 
         if(this.x > game.config.width * (1-.12)) {
-            console.log("Off")
+            //console.log("Off")
             this.setMask(this.offMask);
         }
 
         if(this.x < game.config.width * (.16)) {
-            console.log("On")
+            //console.log("On")
             this.setMask(this.onMask);
         }
 
