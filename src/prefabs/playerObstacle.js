@@ -3,8 +3,10 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         super(scene, curve, x, y, texture, frame);
         scene.add.existing(this);
         
+        this.distanceAlongCurve = 0;
         this.totalFollowDuration = 4000;
         this.expired = false; //If this is true, the next time this resets it is destroyed
+        this.fullScale = .4;
 
         //Setup path initial follow config
         this.pathSpawnConfig = {
@@ -81,6 +83,17 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
     }
 
     update() {
+
+        this.distanceAlongCurve = this.pathTween.elapsed / this.totalFollowDuration;
+
+        //Slightly scale the objects
+        if(this.distanceAlongCurve < .36) {
+            this.setScale(this.fullScale * (1-Math.abs(.36 - this.distanceAlongCurve)));
+        }
+        else if (this.distanceAlongCurve > .68) {
+            this.setScale(this.fullScale * (1-Math.abs(.68 - this.distanceAlongCurve)));
+        }
+
         if(this.x < this.scene.testPlayer.x - this.scene.testPlayer.width/2)
         this.body.enable = false;
 

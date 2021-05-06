@@ -2,6 +2,11 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
     constructor(scene, curve, x, y, texture, frame,) {
         super(scene, curve, x, y, texture, frame);
         scene.add.existing(this);
+
+        this.distanceAlongCurve = 0;
+        this.totalFollowDuration = 4000;
+        this.expired = false; //If this is true, the next time this resets it is destroyed
+        this.fullScale = .4;
         
         //Setup path follow config
         this.pathFollowConfig = {
@@ -41,7 +46,7 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
 
         this.setMask(this.onMask);
 
-        this.setScale(.4)
+        this.setScale(this.fullScale)
         this.play('bObstacleAnim');
 
         scene.physics.overlap(this, scene.testPlayer)
@@ -56,9 +61,21 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         this.offset.y -= Math.floor(Math.random() * 151)
         this.pathOffset = this.offset;
         this.body.enable = true;
+        //console.log(this.distanceAlongCurve);
     }
 
     update() {
+        
+        this.distanceAlongCurve = this.pathTween.elapsed / this.totalFollowDuration;
+
+        if(this.distanceAlongCurve < .4) {
+            this.setScale(this.fullScale * (1-Math.abs(.4 - this.distanceAlongCurve)));
+        }
+        else if (this.distanceAlongCurve > .6) {
+            this.setScale(this.fullScale * (1-Math.abs(.6 - this.distanceAlongCurve)));
+        }
+        
+
         if(this.x < this.scene.testPlayer.x - this.scene.testPlayer.width/2)
         this.body.enable = false;
 
@@ -69,11 +86,13 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         if(this.x > game.config.width * (1-.12)) {
             //console.log("Off")
             this.setMask(this.offMask);
+            //console.log(this.distanceAlongCurve);
         }
 
         if(this.x < game.config.width * (.16)) {
             //console.log("On")
             this.setMask(this.onMask);
+            //console.log(this.distanceAlongCurve);
         }
 
         if(!this.isFollowing()) {
