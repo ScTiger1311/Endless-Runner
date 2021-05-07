@@ -37,19 +37,25 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             frameRate: 15
         });
         this.play('idle');
+        this.MAX_VEL = 2000;
+        this.JUMP_VEL = -600;
+        this.MAX_JUMPS = 1;
+
         // adding sprite and physics object to scene
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setMaxVelocity(0, MAX_VEL);
+        this.setMaxVelocity(0, this.MAX_VEL);
         // setting up variables
         this.isJumping = false;
         this.onGround = true;
         this.jumps = 1;
 
-        //
-        let MAX_VEL = 2000;
-        let JUMP_VEL = -600;
-        let MAX_JUMPS = 1;
+        this.setScale(.3);
+        this.body.setSize(this.width*.7, this.height*.7);
+        this.body.setOffset(50, 45);
+        this.play('player_idle_anim');
+        this.body.onOverlap = true;
+
         // currently for debugging purposes
         this.setCollideWorldBounds(true);
     }
@@ -62,7 +68,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
            && this.jumps > 0){
             this.isJumping = true;
             this.play('jump',true);
-            this.body.velocity.y = JUMP_VEL;
+            this.body.velocity.y = this.JUMP_VEL;
         }
         //if player in midair
         if(!this.onGround && this.isJumping){
@@ -74,7 +80,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         // NOTE: currently broken due to lack of item to collide with
         if(!this.isJumping && this.onGround){
             this.play('idle',true);
-            this.jumps = MAX_JUMPS;
+            this.jumps = this.MAX_JUMPS;
         }
     }
 }

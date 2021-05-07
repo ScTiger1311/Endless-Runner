@@ -25,7 +25,6 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
             from: 0,
             to: 1,
             startAt: 0
-
         };
 
         this.offsetY = -30
@@ -38,6 +37,8 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         scene.physics.world.enable(this);
         this.body.onOverlap = true;
         this.body.setSize(this.width*.5, this.height*.5);
+        this.body.immovable = true;
+        this.body.allowGravity = false;
 
         //Create planet mask
         this.shape = scene.make.graphics();
@@ -62,7 +63,7 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         this.setScale(.4)
         this.play('player_obstacle_anim');
 
-        scene.physics.overlap(this, scene.testPlayer)
+        scene.physics.overlap(this, scene.player)
     }
 
     reset() {
@@ -94,7 +95,7 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
             this.setScale(this.fullScale * (1-Math.abs(.68 - this.distanceAlongCurve)));
         }
 
-        if(this.x < this.scene.testPlayer.x - this.scene.testPlayer.width/2)
+        if(this.x < this.scene.player.x - this.scene.player.width/2)
         this.body.enable = false;
 
         if(!this.isFollowing()) {

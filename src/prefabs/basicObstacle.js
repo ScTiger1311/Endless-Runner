@@ -21,10 +21,14 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
 
         this.startFollow(this.pathFollowConfig)
 
+        this.pathTween.setTimeScale(this.scene.speedIncreasePoint);
+
         //Enable physics
         scene.physics.world.enable(this);
         this.body.onOverlap = true;
         this.body.setSize(this.width*.5, this.height*.5);
+        this.body.immovable = true;
+        this.body.allowGravity = false;
 
         //Create planet mask
         this.shape = scene.make.graphics();
@@ -49,14 +53,23 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         this.setScale(this.fullScale)
         this.play('bObstacleAnim');
 
-        scene.physics.overlap(this, scene.testPlayer)
+        scene.physics.overlap(this, scene.player)
+
+        this.csLogTimer = scene.time.addEvent({
+            delay: 1000,
+            repeat: 60,
+            callback: () => {console.log("TS: " + this.pathTween.timeScale + "\nProgress: " + scene.gameSpeedTimer.getOverallProgress())}
+
+        });
     }
 
     reset() {
+        let oldTimeScale = this.pathTween.timeScale;
         this.setMask(this.onMask);
         this.stopFollow();
         this.setPosition(this.path.curves[0].points[0].x, this.path.curves[0].points[0].y);
         this.startFollow(this.pathFollowConfig, 0)
+        this.pathTween.setTimeScale(oldTimeScale);
         this.offset.y = 0
         this.offset.y -= Math.floor(Math.random() * 151)
         this.pathOffset = this.offset;
@@ -65,9 +78,15 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
     }
 
     update() {
-        
+
         this.distanceAlongCurve = this.pathTween.elapsed / this.totalFollowDuration;
 
+        if (this.scene.gameSpeedTimer.getOverallProgress() > this.scene.speedIncreasePoint) {
+            this.pathTween.setTimeScale(this.scene.gameSpeedTimer.getOverallProgress());
+        }
+
+        //Scale objects up as they approach the front section
+        //Scale them down as they wrap around the back
         if(this.distanceAlongCurve < .4) {
             this.setScale(this.fullScale * (1-Math.abs(.4 - this.distanceAlongCurve)));
         }
@@ -76,7 +95,7 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
         }
         
 
-        if(this.x < this.scene.testPlayer.x - this.scene.testPlayer.width/2)
+        if(this.x < this.scene.player.x - this.scene.player.width/2)
         this.body.enable = false;
 
         if(!this.isFollowing()) {

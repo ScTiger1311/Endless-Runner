@@ -6,7 +6,7 @@ class Play extends Phaser.Scene
     }
 
     init (data) {
-        
+        this.menuData = data.menuTime;
     }
 
     preload()
@@ -26,6 +26,7 @@ class Play extends Phaser.Scene
     create()
     {
         console.log("Entered play scene");
+        console.log(this.menuData)
 
         this.anims.create({
             key: 'bObstacleAnim',
@@ -68,7 +69,9 @@ class Play extends Phaser.Scene
 
         this.backgroundStatic = this.add.sprite(0,0, "gridBG").setOrigin(0,0);
         this.backgroundAnim = this.add.sprite(0,0, "planet_sheet").setOrigin(0,0);
-        this.anims.create(
+        this.speedIncreasePoint = .3;
+        this.bgMaxPlaySpeed = 240;
+        this.bgConfig = this.anims.create(
             {
                 key: "spinning_planet_anim",
                 frames: this.anims.generateFrameNames("planet_sheet", 
@@ -78,10 +81,9 @@ class Play extends Phaser.Scene
                     end: 120,
                     zeroPad: 4,
                 }),
-                frameRate: 240,
+                frameRate: this.bgMaxPlaySpeed,
             });
-        this.backgroundAnim.play("spinning_planet_anim");
-        this.backgroundAnim.anims.setRepeat(-1);
+
 
 
 
@@ -137,10 +139,10 @@ class Play extends Phaser.Scene
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
 
         // create ground object here
-        let testObj = this.add.rectangle(0, this.game.config.height-game.config.height/15, game.config.width, game.config.height/15, 0x000000);
-        this.physics.add.existing(testObj);
-        testObj.body.immovable = true;
-        testObj.body.allowGravity = false;
+        this.testObj = this.add.rectangle(0, this.game.config.height-game.config.height/15, game.config.width, game.config.height/10, 0x000000);
+        this.physics.add.existing(this.testObj);
+        this.testObj.body.immovable = true;
+        this.testObj.body.allowGravity = false;
         
         //create collider w/ ground
         this.physics.add.collider(this.player, this.testObj);
@@ -198,6 +200,14 @@ class Play extends Phaser.Scene
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 
+        //Set up game progress timer event
+        //After this event ends the speed will be at its max
+        this.gameSpeedTimer = this.time.addEvent({
+            delay: 1000,
+            repeat: 60
+
+        });
+
         //Start scoring timer event
         this.timer = this.time.addEvent({
             delay: 1,
@@ -206,6 +216,13 @@ class Play extends Phaser.Scene
         });
 
         this.timeScore = 0;
+
+        //Illegal animation fuckery
+        this.bgConfig.frameRate = this.bgMaxPlaySpeed * this.speedIncreasePoint;
+        this.backgroundAnim.anims.stopOnFrame(120)
+        this.backgroundAnim.play("spinning_planet_anim");
+        //this.backgroundAnim.anims.setRepeat(-1)
+        //console.log("Bg Loop: " + this.gameSpeedTimer.getOverallProgress() + "\nFPS: " + this.backgroundAnim.anims.frameRate);
     }
 
     addPlayerObstacle() {
@@ -227,21 +244,39 @@ class Play extends Phaser.Scene
         if you are unsure.
         */
 
-        this.scoreText.setText("Hyperseconds Drifted: " + this.timer.elapsed.toString().substr(0, 4) );
+        //more illegal animation fuckery
+        if(!this.backgroundAnim.anims.isPlaying) {
+             if (this.gameSpeedTimer.getOverallProgress() > this.speedIncreasePoint){
+                this.bgConfig.frameRate = this.bgMaxPlaySpeed * this.gameSpeedTimer.getOverallProgress();
+             }
+            this.backgroundAnim.play("spinning_planet_anim");
+            //this.backgroundAnim.anims.stopOnFrame(120)
+
+           // console.log("Bg Loop: " + this.gameSpeedTimer.getOverallProgress() + "\nFPS: " + this.backgroundAnim.anims.frameRate);
+        }
+
+        /*if(this.gameSpeedTimer.getOverallProgress() > .3) {
+            this.backgroundAnim.anims.currentAnim.frameRate = this.bgMaxPlaySpeed * this.gameSpeedTimer.getOverallProgress();
+        }*/
+
+        
+
+        this.scoreText.setText("Hyperseconds Drifted: " + this.timer.elapsed.toFixed(0) );
 
         if(Phaser.Input.Keyboard.JustDown(keyUP))
         {         
-            this.testPlayer.y -= 100
+            this.player.y -= 100
             this.addPlayerObstacle()
         }
 
         if(Phaser.Input.Keyboard.JustDown(keyDOWN))
         {         
-            this.testPlayer.y += 100
+            this.player.y += 100
         }
 
-        this.physics.overlap(this.testPlayer, this.playerObsGroup);
-        this.physics.overlap(this.testPlayer, this.basicObsGroup);
+        this.physics.overlap(this.player, this.playerObsGroup);
+        this.physics.overlap(this.player, this.basicObsGroup);
+        // /this.physics.collide(this.player, this.testObj);
         this.player.update();
     }
 }
