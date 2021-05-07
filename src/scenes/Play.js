@@ -20,6 +20,7 @@ class Play extends Phaser.Scene
         this.load.spritesheet('basicObstacleSpritesheet', './assets/spritesheets/Obstacle_Blue_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         this.load.spritesheet('player_obstacle_sheet', './assets/spritesheets/Obstacle_Red_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         //this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
+        this.load.atlas("cycle", "./assets/spritesheets/Player_atlas.png", "./assets/spritesheets/Player_Atlas.json");
     }
 
     create()
@@ -116,12 +117,33 @@ class Play extends Phaser.Scene
         //this.curveGraphics.strokePoints(this.testPath.curves[0].points);
 
         //Create temp physics body to test collision
+        /*
         this.testPlayer = this.physics.add.sprite(this.testCurve.points[6].x + 150, this.testCurve.points[6].y, 'tempPlayer').setOrigin(.5, 1);
         this.testPlayer.setScale(.3);
         this.testPlayer.body.setSize(this.testPlayer.width*.7, this.testPlayer.height*.7);
         this.testPlayer.body.setOffset(50, 45);
         this.testPlayer.play('player_idle_anim');
         this.testPlayer.body.onOverlap = true;
+        */
+
+        //Setup world physics and player
+
+        // gravity in pixels/sec
+        this.physics.world.gravity.y = 2600;
+        // creating 🏍
+        this.player = new Player(this,game.config.width/3, game.config.height/2);
+
+        // defining key
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+
+        // create ground object here
+        let testObj = this.add.rectangle(0, this.game.config.height-game.config.height/15, game.config.width, game.config.height/15, 0x000000);
+        this.physics.add.existing(testObj);
+        testObj.body.immovable = true;
+        testObj.body.allowGravity = false;
+        
+        //create collider w/ ground
+        this.physics.add.collider(this.player, this.testObj);
 
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
@@ -193,6 +215,7 @@ class Play extends Phaser.Scene
         }
         let pObs = new playerObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'player_obstacle_sheet', 0).setOrigin(.5);
         this.playerObsGroup.add(pObs);
+
     }
 
     update(time, delta)
@@ -219,5 +242,6 @@ class Play extends Phaser.Scene
 
         this.physics.overlap(this.testPlayer, this.playerObsGroup);
         this.physics.overlap(this.testPlayer, this.basicObsGroup);
+        this.player.update();
     }
 }
