@@ -11,6 +11,9 @@ class Play extends Phaser.Scene
 
     preload()
     {
+        this.load.audio("introMusic", "./assets/music/main-into-loop.mp3")
+        this.load.audio("loopMusic", "./assets/music/loop.mp3")
+
         this.load.atlas("planet_sheet", "./assets/spritesheets/spinning_planet.png", "./assets/spritesheets/spinning_planet.json");
         this.load.atlas("planet_top_sheet", "./assets/spritesheets/planet_toplayer.png", "./assets/spritesheets/planet_toplayer.json");
         this.load.image("gridBG", "./assets/single_sprites/grid_bg.png");
@@ -84,7 +87,7 @@ class Play extends Phaser.Scene
                 frameRate: this.bgMaxPlaySpeed,
             });
 
-
+        
 
 
         //Setup graphics
@@ -193,12 +196,27 @@ class Play extends Phaser.Scene
         //Place text
         this.scoreText = this.add.text(30, game.config.height * .73, "Hello World", gameUIConfig);
 
+        this.introConfig = {
+            volume: .2
+        }
+        this.loopConfig = {
+            volume: .2,
+            loop: true
+        }
 
+        this.intro = this.sound.add("introMusic", this.introConfig)
+        this.loop = this.sound.add("loopMusic", this.loopConfig)
+        this.intro.play();
+        this.intro.once('complete', ()=>{this.loop.play()});
+        this.loop.
+        
 
 
         //Setup keyboard control
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        keyPLUS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
+        keyMINUS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.MINUS);
 
         //Set up game progress timer event
         //After this event ends the speed will be at its max
@@ -218,10 +236,9 @@ class Play extends Phaser.Scene
         this.timeScore = 0;
 
         //Illegal animation fuckery
-        this.bgConfig.frameRate = this.bgMaxPlaySpeed * this.speedIncreasePoint;
-        this.backgroundAnim.anims.stopOnFrame(120)
+        this.bgConfig.frameRate = this.bgMaxPlaySpeed * this.speedIncreasePoint; //Set starting speed
+        this.backgroundAnim.anims.stopOnFrame(120) //Setup the animation to stop at the last frame
         this.backgroundAnim.play("spinning_planet_anim");
-        //this.backgroundAnim.anims.setRepeat(-1)
         //console.log("Bg Loop: " + this.gameSpeedTimer.getOverallProgress() + "\nFPS: " + this.backgroundAnim.anims.frameRate);
     }
 
@@ -247,19 +264,13 @@ class Play extends Phaser.Scene
         //more illegal animation fuckery
         if(!this.backgroundAnim.anims.isPlaying) {
              if (this.gameSpeedTimer.getOverallProgress() > this.speedIncreasePoint){
-                this.bgConfig.frameRate = this.bgMaxPlaySpeed * this.gameSpeedTimer.getOverallProgress();
+                this.bgConfig.frameRate = this.bgMaxPlaySpeed * this.gameSpeedTimer.getOverallProgress(); //Change animation speed
              }
-            this.backgroundAnim.play("spinning_planet_anim");
-            //this.backgroundAnim.anims.stopOnFrame(120)
+            this.backgroundAnim.play("spinning_planet_anim"); //Play with new speed
 
            // console.log("Bg Loop: " + this.gameSpeedTimer.getOverallProgress() + "\nFPS: " + this.backgroundAnim.anims.frameRate);
         }
 
-        /*if(this.gameSpeedTimer.getOverallProgress() > .3) {
-            this.backgroundAnim.anims.currentAnim.frameRate = this.bgMaxPlaySpeed * this.gameSpeedTimer.getOverallProgress();
-        }*/
-
-        
 
         this.scoreText.setText("Hyperseconds Drifted: " + this.timer.elapsed.toFixed(0) );
 
@@ -272,6 +283,22 @@ class Play extends Phaser.Scene
         if(Phaser.Input.Keyboard.JustDown(keyDOWN))
         {         
             this.player.y += 100
+        }
+
+        if(Phaser.Input.Keyboard.JustDown(keyPLUS)) {
+            if(this.introConfig.volume < 1) {
+                this.intro.setVolume(this.introConfig.volume += .1);
+                this.loop.setVolume(this.loopConfig.volume += .1);
+            }
+            console.log("Plus");
+        }
+
+        if(Phaser.Input.Keyboard.JustDown(keyMINUS)) {
+            if(this.introConfig.volume > .1) {
+                this.intro.setVolume(this.introConfig.volume -= .1);
+                this.loop.setVolume(this.loopConfig.volume -= .1);
+            }
+            console.log("Minus");
         }
 
         this.physics.overlap(this.player, this.playerObsGroup);

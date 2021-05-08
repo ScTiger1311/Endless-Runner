@@ -33,5 +33,5 @@ let game = new Phaser.Game(config);
 //set UI sizes
 
 //reserve keyboard bindings
-let keyF, keyR, keyLEFT, keyRIGHT, keyUP, keyDOWN;
+let keyF, keyR, keyLEFT, keyRIGHT, keyUP, keyDOWN, keyPLUS, keyMINUS;
 
