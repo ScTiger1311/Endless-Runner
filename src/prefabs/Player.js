@@ -46,7 +46,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.onGround = true;
         this.jumps = 1;
 
-        //
+        //  setting up physics variables
         let MAX_VEL = 2000;
         let JUMP_VEL = -600;
         let MAX_JUMPS = 1;
