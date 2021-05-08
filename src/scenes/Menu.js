@@ -50,7 +50,7 @@ class Menu extends Phaser.Scene
             repeat: (-1),
         });
         // instructions screen
-        this.instructions = this.add.sprite(this.game.config.width/2, this.game.config.height*.39, 'menuAtlas', 'Instruction0001').setAlpha(0);
+        this.instructions = this.add.sprite(this.game.config.width/2, this.game.config.height*.39, 'menuAtlas', 'Instructions0001').setAlpha(0);
         this.anims.create({
             key: "instructions",
             frames: this.anims.generateFrameNames("menuAtlas",
@@ -147,7 +147,7 @@ class Menu extends Phaser.Scene
             }
             if(Phaser.Input.Keyboard.JustDown(keyENTER)){
                 // start game
-                this.scene.start('Play');
+                this.scene.start('playScene');
             }
         }
 
@@ -166,7 +166,7 @@ class Menu extends Phaser.Scene
                 this.home.setAlpha(1);
             }
             if(this.ending && Phaser.Input.Keyboard.JustDown(keyENTER)){
-                this.scene.start('Play');
+                this.scene.start('playScene');
             }
         }
     }

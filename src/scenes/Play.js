@@ -142,12 +142,6 @@ class Play extends Phaser.Scene
 
         // defining key
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-
-        // create ground object here
-        this.testObj = this.add.rectangle(0, this.game.config.height-game.config.height/15, game.config.width, game.config.height/10, 0x000000);
-        this.physics.add.existing(this.testObj);
-        this.testObj.body.immovable = true;
-        this.testObj.body.allowGravity = false;
         
         //create collider w/ ground
         this.physics.add.collider(this.player, this.testObj);
@@ -169,7 +163,7 @@ class Play extends Phaser.Scene
         })
 
         //Create enemy follower
-        let obs1 = new basicObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'basicObstacleSpritesheet', 0).setOrigin(.5);
+        let obs1 = new basicObstacle(this, this.testPath, this.testCurve.points[0].x, this.testCurve.points[0].y, 'basicObstacleSpritesheet', 0, true).setOrigin(.5);
         this.basicObsGroup.add(obs1);
 
         //Display score
@@ -245,7 +239,7 @@ class Play extends Phaser.Scene
     }
 
     addPlayerObstacle() {
-        if(this.playerObsGroup.getLength() > 2) {
+        if(this.playerObsGroup.getLength() > (4) * this.gameSpeedTimer.getOverallProgress()) {
             let dObs = this.playerObsGroup.getLast(true, false)
             dObs.expired = true;
         }

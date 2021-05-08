@@ -1,5 +1,5 @@
 class playerObstacle extends Phaser.GameObjects.PathFollower {
-    constructor(scene, curve, x, y, texture, frame,) {
+    constructor(scene, curve, x, y, texture, frame) {
         super(scene, curve, x, y, texture, frame);
         scene.add.existing(this);
         
@@ -27,7 +27,7 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
             startAt: 0
         };
 
-        this.offsetY = -30
+        this.offsetY = -Math.abs(this.scene.player.y - game.config.height * .595)
 
         this.startFollow(this.pathSpawnConfig)
 
@@ -70,6 +70,12 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         this.csLogTimer = scene.time.addEvent({
             delay: 1000,
             repeat: 60
+        });
+
+        this.expireTimer = scene.time.addEvent({
+            delay: 10000,
+            repeat: 0,
+            callback: ()=>{this.expired = true;}
         });
     }
 

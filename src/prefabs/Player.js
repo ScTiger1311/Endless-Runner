@@ -37,9 +37,10 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             frameRate: 15
         });
         this.play('idle');
-        this.MAX_VEL = 2000;
-        this.JUMP_VEL = -600;
-        this.MAX_JUMPS = 1;
+        this.MAX_VEL = 800;
+        this.JUMP_VEL = -900;
+        this.MAX_JUMPS = 2;
+        this.MAX_OBS = 3;
 
         // adding sprite and physics object to scene
         scene.add.existing(this);
@@ -49,12 +50,14 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         // setting up variables
         this.isJumping = false;
         this.onGround = true;
-        this.jumps = 1;
+        this.jumps = this.MAX_JUMPS;
+        this.obsThisJump = this.MAX_OBS;
+        this.horiSpeed = 1000;
 
         //this.setScale(.3);
-        // this.body.setSize(this.width*.7, this.height*.7);
-        // this.body.setOffset(50, 45);
-        this.body.width
+        this.setScale(.4)
+        this.body.setSize(this.width*.7, this.height*.7);
+        this.body.setOffset(50, 45);
 
         this.play('player_idle_anim');
         this.body.onOverlap = true;
@@ -63,32 +66,43 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.setCollideWorldBounds(true);
     }
     
-    update() {
+    update(time, delta) {
+        let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
         // checking if player is on the ground
-        this.onGround = (this.y >= game.config.height * .595); //this.body.touching.down;
+        this.onGround = (this.y >= game.config.height * .6); //this.body.touching.down;
+
+        if(keyRIGHT.isDown) {
+            this.x += this.horiSpeed * deltaMultiplier;
+        }
         //if player on ground, and jump button held, jump
-        if(Phaser.Input.Keyboard.DownDuration(keyUP, 150) && !this.isJumping
+        if(Phaser.Input.Keyboard.JustDown(keyUP) && !this.isJumping
            && this.jumps > 0){
+            this.jumps -= 1;
+            this.obsThisJump -= 1;
             this.isJumping = true;
             this.play('jump',true);
-            //console.log("Scale: " + this.body.sourceHeight + ", " + this.body.sourceWidth);
-            this.body.velocity.y = this.JUMP_VEL;
+            this.playAfterDelay('jumphold', 1600);
+            console.log("Jumps: " + this.jumps + "obs: " + this.obsThisJump);
+            if(this.obsThisJump > 0)
+                this.scene.addPlayerObstacle();
+            this.body.velocity.y += this.JUMP_VEL;
             this.body.allowGravity = true;
         }
         //if player in midair
         if(!this.onGround && this.isJumping){
-            this.play('jumphold',true);
+            // /this.play('jumphold',true);
             this.isJumping = false;
-            this.jumps--;
         }
         // if player has landed, go back to idle sprite, reset number of jumps
         // NOTE: currently broken due to lack of item to collide with
         if(!this.isJumping && this.onGround){
             this.play('idle',true);
             this.body.velocity.y = 0;
+            this.y = game.config.height * .6;
             this.body.allowGravity = false;
             //console.log("Scale: " + this.body.sourceHeight + ", " + this.body.sourceWidth);
             this.jumps = this.MAX_JUMPS;
+            this.obsThisJump = this.MAX_OBS
         }
     }
 }

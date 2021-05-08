@@ -1,8 +1,10 @@
 class basicObstacle extends Phaser.GameObjects.PathFollower {
-    constructor(scene, curve, x, y, texture, frame,) {
-        super(scene, curve, x, y, texture, frame);
+    constructor(scene, curve, x, y, texture, frame, first) {
+        super(scene, curve, x, y, texture, frame, first);
         scene.add.existing(this);
 
+        this.firstSpawn = first;
+        this.spawnedThisLoop = false;
         this.distanceAlongCurve = 0;
         this.totalFollowDuration = 4000;
         this.expired = false; //If this is true, the next time this resets it is destroyed
@@ -63,13 +65,16 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
 
     reset() {
         let oldTimeScale = this.pathTween.timeScale;
+        this.spawnedThisLoop = false;
         this.setMask(this.onMask);
         this.stopFollow();
         this.setPosition(this.path.curves[0].points[0].x, this.path.curves[0].points[0].y);
         this.startFollow(this.pathFollowConfig, 0)
         this.pathTween.setTimeScale(oldTimeScale);
-        this.offset.y = 0
-        this.offset.y -= Math.floor(Math.random() * 151)
+        if(!this.firstSpawn == true) {
+            this.offset.y = 0
+            this.offset.y -= Math.floor(Math.random() * 151)
+        }
         this.pathOffset = this.offset;
         this.body.enable = true;
         //console.log(this.distanceAlongCurve);
@@ -78,6 +83,13 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
     update() {
 
         this.distanceAlongCurve = this.pathTween.elapsed / this.totalFollowDuration;
+
+        if(this.distanceAlongCurve > .4 && this.scene.basicObsGroup.getLength() < 2 && !this.spawnedThisLoop) {
+            //Create enemy follower
+            this.spawnedThisLoop = true;
+            let obs = new basicObstacle(this.scene, this.scene.testPath, this.scene.testCurve.points[0].x, this.scene.testCurve.points[0].y, 'basicObstacleSpritesheet', 0, false).setOrigin(.5);
+            this.scene.basicObsGroup.add(obs);
+        }
 
         if (this.scene.gameSpeedTimer.getOverallProgress() > this.scene.speedIncreasePoint) {
             this.pathTween.setTimeScale(this.scene.gameSpeedTimer.getOverallProgress());
