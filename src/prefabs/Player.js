@@ -36,6 +36,17 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             }),
             frameRate: 15
         });
+        scene.anims.create({
+            key: 'land',
+            frames: this.anims.generateFrameNames('cycle',
+            {
+                prefix: "PlayerLand",
+                start: 1,
+                end: 4,
+                zeroPad: 4,
+            }),
+            frameRate: 15
+        });
         this.play('idle');
         // adding sprite and physics object to scene
         scene.add.existing(this);
@@ -73,7 +84,10 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         // if player has landed, go back to idle sprite, reset number of jumps
         // NOTE: currently broken due to lack of item to collide with
         if(!this.isJumping && this.onGround){
-            this.play('idle',true);
+            this.play('land', true);
+            this.on('animationcomplete', () =>{
+                play('idle',true);
+            });
             this.jumps = MAX_JUMPS;
         }
     }
