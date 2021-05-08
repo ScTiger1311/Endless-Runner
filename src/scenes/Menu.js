@@ -16,11 +16,20 @@ class Menu extends Phaser.Scene
     preload()
     {
         this.load.atlas("menuAtlas", "./assets/spritesheets/Menu_Atlas.png", "./assets/spritesheets/Menu_Atlas.json");
+        this.load.audio("select", "./assets/sfx/Menu_Select.wav");
         console.log("Enter Menu Scene");
     }
 
     create()
     {
+
+        this.selectConfig = {
+            volume: .2,
+            loop: false
+        }
+
+        this.select = this.sound.add("select", this.selectConfig)
+
         this.background = this.add.image(this.game.config.width/2, this.game.config.height/2,'menuAtlas', 'MenuBase0001');
         // home menu screen
         this.home = this.add.sprite(this.game.config.width/2, this.game.config.height*.39, 'menuAtlas', 'Menu0001');
@@ -151,6 +160,7 @@ class Menu extends Phaser.Scene
         if(this.begin){
             if(Phaser.Input.Keyboard.JustDown(keyLEFT)){
                 // view instructions
+                this.select.play();
                 this.home.setAlpha(0);
                 this.instructions.setAlpha(1);
                 this.instructions.play("instructions");
@@ -159,6 +169,7 @@ class Menu extends Phaser.Scene
             }
             if(Phaser.Input.Keyboard.JustDown(keyRIGHT)){
                 // view credits
+                this.select.play();
                 this.home.setAlpha(0);
                 this.credits.setAlpha(1);
                 this.credits.play("credit");
@@ -167,6 +178,7 @@ class Menu extends Phaser.Scene
             }
             if(Phaser.Input.Keyboard.JustDown(keyENTER)){
                 // start game
+                this.select.play();
                 this.scene.start('playScene');
             }
         }
@@ -174,6 +186,7 @@ class Menu extends Phaser.Scene
         else{
             if(Phaser.Input.Keyboard.JustDown(keyBACK)){
                 this.begin = true;
+                this.select.play();
                 if(this.inst){
                     this.instructions.setAlpha(0);
                 }

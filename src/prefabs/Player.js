@@ -92,8 +92,9 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.dead = true;
         this.setScale(.7)
         this.body.enable = false;
-        this.play("die");
         this.scene.sound.stopAll();
+        this.play("die");
+        this.scene.explosion.play();
         this.on('animationcomplete', () =>{
             this.disableBody(true, true);
             //this.destroy();
@@ -136,6 +137,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                 this.body.allowGravity = true;
                 this.landed = false;
                 this.body.setSize(this.width*.5, this.height*.5);
+                this.scene.jump.play();
             }
             //if player in midair
             if(!this.onGround && this.isJumping){

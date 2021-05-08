@@ -15,6 +15,9 @@ class Play extends Phaser.Scene
     {
         this.load.audio("introMusic", "./assets/music/main-into-loop.mp3")
         this.load.audio("loopMusic", "./assets/music/loop.mp3")
+        this.load.audio("select", "./assets/sfx/Menu_Select.wav");
+        this.load.audio("die", "./assets/sfx/Explosion.wav");
+        this.load.audio("jump", "./assets/sfx/MotoJump.wav");
 
         this.load.atlas("planet_sheet", "./assets/spritesheets/spinning_planet.png", "./assets/spritesheets/spinning_planet.json");
         this.load.atlas("planet_top_sheet", "./assets/spritesheets/planet_toplayer.png", "./assets/spritesheets/planet_toplayer.json");
@@ -205,7 +208,19 @@ class Play extends Phaser.Scene
         this.loop = this.sound.add("loopMusic", this.loopConfig)
         this.intro.play();
         this.intro.once('complete', ()=>{this.loop.play()});
-        this.loop.
+       
+        this.explosionConfig = {
+            volume: .8,
+            loop: false
+        }
+
+        this.jumpConfig = {
+            volume: .05,
+            loop: false
+        }
+
+        this.explosion = this.sound.add("die", this.explosionConfig)
+        this.jump = this.sound.add("jump", this.jumpConfig)
         
 
 
