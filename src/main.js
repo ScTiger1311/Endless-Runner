@@ -6,7 +6,7 @@ let config =
     physics:{
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
             gravity: {
                 x: 0,
                 y: 0
@@ -33,5 +33,5 @@ let game = new Phaser.Game(config);
 //set UI sizes
 
 //reserve keyboard bindings
-let keyF, keyR, keyLEFT, keyRIGHT, keyUP, keyDOWN, keyPLUS, keyMINUS;
+let keyF, keyR, keyLEFT, keyRIGHT, keyUP, keyDOWN, keyPLUS, keyMINUS, keyENTER, keyBACK;
 

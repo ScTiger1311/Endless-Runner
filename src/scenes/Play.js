@@ -6,7 +6,9 @@ class Play extends Phaser.Scene
     }
 
     init (data) {
-        this.menuData = data.menuTime;
+        this.menuData = 0;
+        if(data.menuTime > 0)
+            this.menuData = data.menuTime;
     }
 
     preload()
@@ -274,16 +276,16 @@ class Play extends Phaser.Scene
 
         this.scoreText.setText("Hyperseconds Drifted: " + this.timer.elapsed.toFixed(0) );
 
-        if(Phaser.Input.Keyboard.JustDown(keyUP))
-        {         
-            this.player.y -= 100
-            this.addPlayerObstacle()
-        }
+        // if(Phaser.Input.Keyboard.JustDown(keyUP))
+        // {         
+        //     this.player.y -= 100
+        //     this.addPlayerObstacle()
+        // }
 
-        if(Phaser.Input.Keyboard.JustDown(keyDOWN))
-        {         
-            this.player.y += 100
-        }
+        // if(Phaser.Input.Keyboard.JustDown(keyDOWN))
+        // {         
+        //     this.player.y += 100
+        // }
 
         if(Phaser.Input.Keyboard.JustDown(keyPLUS)) {
             if(this.introConfig.volume < 1) {
