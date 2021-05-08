@@ -133,6 +133,9 @@ class Menu extends Phaser.Scene
             },
             fixedWidth: 0,
         }
+
+        this.scoreText = this.add.text(game.config.width * .571, game.config.height * .328, this.score, this.gameUIConfig);
+        this.highscoreText = this.add.text(game.config.width * .477, game.config.height * .362, highscore, this.gameUIConfig);
     
     }
 
@@ -150,8 +153,8 @@ class Menu extends Phaser.Scene
             this.end.setAlpha(1);
             this.end.play("gameover");
             //Place text
-            this.scoreText = this.add.text(game.config.width * .571, game.config.height * .328, this.score, this.gameUIConfig);
-            this.highscoreText = this.add.text(game.config.width * .477, game.config.height * .362, highscore, this.gameUIConfig);
+            this.scoreText.text = this.score;
+            this.highscoreText.text = highscore;
             this.scoreText.setAlpha(1)
             this.highscoreText.setAlpha(1)
             this.begin = false;
