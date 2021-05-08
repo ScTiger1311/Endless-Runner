@@ -22,7 +22,7 @@ class Menu extends Phaser.Scene
 
     create()
     {
-        console.log("V. 0.0.1");
+        console.log("V. 1.0.1");
 
         this.selectConfig = {
             volume: .4,
