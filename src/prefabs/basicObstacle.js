@@ -57,9 +57,7 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
 
         this.csLogTimer = scene.time.addEvent({
             delay: 1000,
-            repeat: 60,
-            // /callback: () => {console.log("TS: " + this.pathTween.timeScale + "\nProgress: " + scene.gameSpeedTimer.getOverallProgress())}
-
+            repeat: 60
         });
     }
 

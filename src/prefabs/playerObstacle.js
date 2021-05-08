@@ -31,6 +31,8 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
 
         this.startFollow(this.pathSpawnConfig)
 
+        this.pathTween.setTimeScale(this.scene.speedIncreasePoint);
+
         this.pathOffset.y = this.offsetY
 
         //Enable physics
@@ -64,6 +66,11 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
         this.play('player_obstacle_anim');
 
         scene.physics.overlap(this, scene.player)
+
+        this.csLogTimer = scene.time.addEvent({
+            delay: 1000,
+            repeat: 60
+        });
     }
 
     reset() {
@@ -71,13 +78,12 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
             this.destroy();
             return
         }
-
+        let oldTimeScale = this.pathTween.timeScale;
         this.setMask(this.onMask);
         this.stopFollow();
         this.setPosition(this.path.curves[0].points[0].x, this.path.curves[0].points[0].y);
         this.startFollow(this.pathLoopConfig, 0)
-        // this.offset.y = 0
-        // this.offset.y -= Math.floor(Math.random() * 151)
+        this.pathTween.setTimeScale(oldTimeScale);
         this.pathOffset.y = this.offsetY;
 
         this.body.enable = true;
@@ -86,6 +92,10 @@ class playerObstacle extends Phaser.GameObjects.PathFollower {
     update() {
 
         this.distanceAlongCurve = this.pathTween.elapsed / this.totalFollowDuration;
+
+        if (this.scene.gameSpeedTimer.getOverallProgress() > this.scene.speedIncreasePoint) {
+            this.pathTween.setTimeScale(this.scene.gameSpeedTimer.getOverallProgress());
+        }
 
         //Slightly scale the objects
         if(this.distanceAlongCurve < .36) {
