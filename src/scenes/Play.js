@@ -24,12 +24,12 @@ class Play extends Phaser.Scene
         this.load.image("gridBG", "./assets/single_sprites/grid_bg.png");
         this.load.image("obstacle", "./assets/sprites/TempEnemy.png");
         
-        this.load.spritesheet("tempPlayer", "./assets/spritesheets/Player_Idle_Sheet.png", {frameWidth: 416, frameHeight: 222, startFrame: 0, endFrame: 3});
+        //this.load.spritesheet("tempPlayer", "./assets/spritesheets/Player_Idle_Sheet.png", {frameWidth: 416, frameHeight: 222, startFrame: 0, endFrame: 3});
         this.load.spritesheet('basicObstacleSpritesheet', './assets/spritesheets/Obstacle_Blue_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         this.load.spritesheet('player_obstacle_sheet', './assets/spritesheets/Obstacle_Red_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         this.load.spritesheet('Explosion_Sheet', './assets/spritesheets/Explosion_Sheet.png', {frameWidth: 375, frameHeight: 323, startFrame: 0, endFrame: 7})
         //this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
-        this.load.atlas("cycle", "./assets/spritesheets/Player_atlas.png", "./assets/spritesheets/Player_Atlas.json");
+        this.load.atlas("cycle", "./assets/spritesheets/Player_Atlas.png", "./assets/spritesheets/Player_Atlas.json");
     }
 
     create()
@@ -62,7 +62,7 @@ class Play extends Phaser.Scene
 
         });
 
-        this.anims.create({
+        /*this.anims.create({
             key: 'player_idle_anim',
             frames: this.anims.generateFrameNumbers('tempPlayer',
             {
@@ -73,7 +73,7 @@ class Play extends Phaser.Scene
             frameRate: 15,
             repeat: -1
 
-        });
+        });*/
 
         this.backgroundStatic = this.add.sprite(0,0, "gridBG").setOrigin(0,0);
         this.backgroundAnim = this.add.sprite(0,0, "planet_sheet").setOrigin(0,0);
