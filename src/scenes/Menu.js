@@ -24,7 +24,7 @@ class Menu extends Phaser.Scene
     {
 
         this.selectConfig = {
-            volume: .2,
+            volume: .4,
             loop: false
         }
 
@@ -150,7 +150,9 @@ class Menu extends Phaser.Scene
             this.end.play("gameover");
             //Place text
             this.scoreText = this.add.text(game.config.width * .571, game.config.height * .328, this.score, this.gameUIConfig);
-            this.scoreText = this.add.text(game.config.width * .477, game.config.height * .362, highscore, this.gameUIConfig);
+            this.highscoreText = this.add.text(game.config.width * .477, game.config.height * .362, highscore, this.gameUIConfig);
+            this.scoreText.setAlpha(1)
+            this.highscoreText.setAlpha(1)
             this.begin = false;
             this.ending = true;
             this.score = 0;
@@ -161,6 +163,8 @@ class Menu extends Phaser.Scene
             if(Phaser.Input.Keyboard.JustDown(keyLEFT)){
                 // view instructions
                 this.select.play();
+                this.scoreText.setAlpha(0)
+                this.highscoreText.setAlpha(0)
                 this.home.setAlpha(0);
                 this.instructions.setAlpha(1);
                 this.instructions.play("instructions");
@@ -170,6 +174,8 @@ class Menu extends Phaser.Scene
             if(Phaser.Input.Keyboard.JustDown(keyRIGHT)){
                 // view credits
                 this.select.play();
+                this.scoreText.setAlpha(0)
+                this.highscoreText.setAlpha(0)
                 this.home.setAlpha(0);
                 this.credits.setAlpha(1);
                 this.credits.play("credit");
@@ -188,12 +194,18 @@ class Menu extends Phaser.Scene
                 this.begin = true;
                 this.select.play();
                 if(this.inst){
+                    this.scoreText.setAlpha(0)
+                    this.highscoreText.setAlpha(0)
                     this.instructions.setAlpha(0);
                 }
                 if(this.cred){
+                    this.scoreText.setAlpha(0)
+                    this.highscoreText.setAlpha(0)
                     this.credits.setAlpha(0)
                 }
                 if(this.ending){
+                    this.scoreText.setAlpha(0)
+                    this.highscoreText.setAlpha(0)
                     this.end.setAlpha(0);
                 }
                 this.home.setAlpha(1);

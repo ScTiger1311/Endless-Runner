@@ -297,9 +297,9 @@ class Play extends Phaser.Scene
         //     this.player.y += 100
         // }
 
-        if(Phaser.Input.Keyboard.JustDown(keyF)) {
+        /*if(Phaser.Input.Keyboard.JustDown(keyF)) {
             this.player.die();
-        }
+        }*/
 
         if(Phaser.Input.Keyboard.JustDown(keyPLUS)) {
             if(this.introConfig.volume < 1) {
