@@ -10,6 +10,7 @@ class Menu extends Phaser.Scene
         if(data.score > 0){
             this.score = data.score;
         }
+        console.log(this.score)
     }
 
     preload()
@@ -107,6 +108,22 @@ class Menu extends Phaser.Scene
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         keyBACK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
+        //Display score
+        this.gameUIConfig = {
+            fontFamily: 'RocketRinder',
+            fontSize: '20px',
+            color: '#C9E2FF',
+            stroke: '#ff002c',
+            align: 'left',
+            padding: {
+                top: 1,
+                bottom: 1,
+                left: 1,
+                right: 1            
+            },
+            fixedWidth: 0,
+        }
+    
     }
 
     update(time, delta)
@@ -122,6 +139,9 @@ class Menu extends Phaser.Scene
             this.home.setAlpha(0);
             this.end.setAlpha(1);
             this.end.play("gameover");
+            //Place text
+            this.scoreText = this.add.text(game.config.width * .571, game.config.height * .328, this.score, this.gameUIConfig);
+            this.scoreText = this.add.text(game.config.width * .477, game.config.height * .362, highscore, this.gameUIConfig);
             this.begin = false;
             this.ending = true;
             this.score = 0;

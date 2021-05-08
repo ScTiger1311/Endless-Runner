@@ -84,7 +84,7 @@ class basicObstacle extends Phaser.GameObjects.PathFollower {
 
         this.distanceAlongCurve = this.pathTween.elapsed / this.totalFollowDuration;
 
-        if(this.distanceAlongCurve > .4 && this.scene.basicObsGroup.getLength() < 2 && !this.spawnedThisLoop) {
+        if(this.distanceAlongCurve > .4 && this.scene.basicObsGroup.getLength() < 3 && !this.spawnedThisLoop) {
             //Create enemy follower
             this.spawnedThisLoop = true;
             let obs = new basicObstacle(this.scene, this.scene.testPath, this.scene.testCurve.points[0].x, this.scene.testCurve.points[0].y, 'basicObstacleSpritesheet', 0, false).setOrigin(.5);

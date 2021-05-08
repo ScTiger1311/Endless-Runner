@@ -24,6 +24,7 @@ class Play extends Phaser.Scene
         this.load.spritesheet("tempPlayer", "./assets/spritesheets/Player_Idle_Sheet.png", {frameWidth: 416, frameHeight: 222, startFrame: 0, endFrame: 3});
         this.load.spritesheet('basicObstacleSpritesheet', './assets/spritesheets/Obstacle_Blue_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
         this.load.spritesheet('player_obstacle_sheet', './assets/spritesheets/Obstacle_Red_Sheet.png', {frameWidth: 156, frameHeight: 148, startFrame: 0, endFrame: 16})
+        this.load.spritesheet('Explosion_Sheet', './assets/spritesheets/Explosion_Sheet.png', {frameWidth: 375, frameHeight: 323, startFrame: 0, endFrame: 7})
         //this.load.plugin('rexpathfollowerplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexpathfollowerplugin.min.js', true);
         this.load.atlas("cycle", "./assets/spritesheets/Player_atlas.png", "./assets/spritesheets/Player_Atlas.json");
     }
@@ -31,7 +32,6 @@ class Play extends Phaser.Scene
     create()
     {
         console.log("Entered play scene");
-        console.log(this.menuData)
 
         this.anims.create({
             key: 'bObstacleAnim',
@@ -74,7 +74,7 @@ class Play extends Phaser.Scene
 
         this.backgroundStatic = this.add.sprite(0,0, "gridBG").setOrigin(0,0);
         this.backgroundAnim = this.add.sprite(0,0, "planet_sheet").setOrigin(0,0);
-        this.speedIncreasePoint = .3;
+        this.speedIncreasePoint = .5;
         this.bgMaxPlaySpeed = 240;
         this.bgConfig = this.anims.create(
             {
@@ -149,6 +149,7 @@ class Play extends Phaser.Scene
         //Setup physics world overlap event between player and obstacle
         this.physics.world.on('overlap', (obj1, obj2, bod1, bod2)=>{
             //Reset obj position on path
+            obj1.die();
             obj2.reset()
         });
 
@@ -213,6 +214,7 @@ class Play extends Phaser.Scene
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keyPLUS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
         keyMINUS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.MINUS);
+        keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
 
         //Set up game progress timer event
         //After this event ends the speed will be at its max
@@ -225,7 +227,6 @@ class Play extends Phaser.Scene
         //Start scoring timer event
         this.timer = this.time.addEvent({
             delay: 1,
-            callback: () => {this.timeScore += 1},
             loop: true
         });
 
@@ -239,7 +240,7 @@ class Play extends Phaser.Scene
     }
 
     addPlayerObstacle() {
-        if(this.playerObsGroup.getLength() > (4) * this.gameSpeedTimer.getOverallProgress()) {
+        if(this.playerObsGroup.getLength() > (5) * this.gameSpeedTimer.getOverallProgress()) {
             let dObs = this.playerObsGroup.getLast(true, false)
             dObs.expired = true;
         }
@@ -267,8 +268,8 @@ class Play extends Phaser.Scene
            // console.log("Bg Loop: " + this.gameSpeedTimer.getOverallProgress() + "\nFPS: " + this.backgroundAnim.anims.frameRate);
         }
 
-
-        this.scoreText.setText("Hyperseconds Drifted: " + this.timer.elapsed.toFixed(0) );
+        this.timeScore = parseInt(this.timer.elapsed/100)
+        this.scoreText.setText("Hyperseconds Drifted: " + (this.timer.elapsed/100).toFixed(0) );
 
         // if(Phaser.Input.Keyboard.JustDown(keyUP))
         // {         
@@ -280,6 +281,10 @@ class Play extends Phaser.Scene
         // {         
         //     this.player.y += 100
         // }
+
+        if(Phaser.Input.Keyboard.JustDown(keyF)) {
+            this.player.die();
+        }
 
         if(Phaser.Input.Keyboard.JustDown(keyPLUS)) {
             if(this.introConfig.volume < 1) {
